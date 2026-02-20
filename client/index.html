@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skills Extractor</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="app-header">
+      <h1>Skills Extractor</h1>
+      <p class="subtitle">Upload your CV in PDF format to extract your developer skills.</p>
+    </header>
+
+    <main class="main-content">
+      <section class="upload-section">
+        <div
+          class="drop-zone"
+          :class="{ 'drop-zone--active': isDragging, 'drop-zone--has-file': selectedFile }"
+          @dragover.prevent="isDragging = true"
+          @dragleave.prevent="isDragging = false"
+          @drop.prevent="onDrop"
+          @click="$refs.fileInput.click()"
+        >
+          <input
+            ref="fileInput"
+            type="file"
+            accept="application/pdf"
+            class="file-input"
+            @change="onFileChange"
+          />
+          <div v-if="!selectedFile" class="drop-zone__prompt">
+            <span class="drop-zone__icon">📄</span>
+            <p>Drag &amp; drop your PDF here, or <strong>click to browse</strong></p>
+          </div>
+          <div v-else class="drop-zone__file-info">
+            <span class="drop-zone__icon">✅</span>
+            <p><strong>{{ selectedFile.name }}</strong></p>
+            <p class="file-size">{{ formatFileSize(selectedFile.size) }}</p>
+          </div>
+        </div>
+
+        <div class="action-bar">
+          <button
+            class="btn btn--primary"
+            :disabled="!selectedFile || isLoading"
+            @click="run"
+          >
+            <span v-if="isLoading" class="spinner"></span>
+            <span v-else>▶ RUN</span>
+          </button>
+          <button
+            v-if="selectedFile"
+            class="btn btn--secondary"
+            :disabled="isLoading"
+            @click="reset"
+          >
+            Clear
+          </button>
+        </div>
+
+        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+      </section>
+
+      <section v-if="skills.length > 0" class="results-section">
+        <h2>Extracted Skills <span class="badge">{{ skills.length }}</span></h2>
+        <ul class="skills-list">
+          <li
+            v-for="(skill, index) in skills"
+            :key="index"
+            class="skill-item"
+          >
+            <span class="skill-name">{{ skill.name }}</span>
+            <span class="skill-level" :class="'level--' + skill.level.toLowerCase()">
+              {{ skill.level }}
+            </span>
+          </li>
+        </ul>
+      </section>
+
+      <section v-if="hasRun && skills.length === 0 && !isLoading" class="empty-results">
+        <p>⚠️ No skills were identified in the uploaded CV. Please try a different PDF.</p>
+      </section>
+    </main>
+  </div>
+
+  <!-- Vue.js 3 (local vendor copy) -->
+  <script src="vendor/vue.global.prod.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
