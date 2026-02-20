@@ -1,0 +1,279 @@
+/* ===================================================
+   style.css – Skills Extractor client styles
+   =================================================== */
+
+/* ---------- Reset & Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f0f4f8;
+  color: #2d3748;
+  min-height: 100vh;
+}
+
+/* ---------- Layout ---------- */
+#app {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* ---------- Header ---------- */
+.app-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.app-header h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #2b6cb0;
+}
+
+.app-header .subtitle {
+  color: #718096;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}
+
+/* ---------- Upload Section ---------- */
+.upload-section {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Drop Zone */
+.drop-zone {
+  border: 2px dashed #bee3f8;
+  border-radius: 10px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  background: #ebf8ff;
+  user-select: none;
+}
+
+.drop-zone:hover,
+.drop-zone--active {
+  background: #bee3f8;
+  border-color: #3182ce;
+}
+
+.drop-zone--has-file {
+  border-color: #38a169;
+  background: #f0fff4;
+}
+
+.drop-zone__icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.drop-zone p {
+  color: #4a5568;
+  font-size: 0.95rem;
+}
+
+.drop-zone strong {
+  color: #2b6cb0;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-size {
+  color: #718096;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+/* ---------- Action Bar ---------- */
+.action-bar {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  justify-content: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+  min-width: 120px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: #3182ce;
+  color: #ffffff;
+}
+
+.btn--primary:not(:disabled):hover {
+  background: #2b6cb0;
+}
+
+.btn--secondary {
+  background: #e2e8f0;
+  color: #4a5568;
+}
+
+.btn--secondary:not(:disabled):hover {
+  background: #cbd5e0;
+}
+
+/* ---------- Spinner ---------- */
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Error Message ---------- */
+.error-message {
+  color: #c53030;
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: 6px;
+  padding: 0.6rem 1rem;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* ---------- Results Section ---------- */
+.results-section {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-top: 2rem;
+}
+
+.results-section h2 {
+  font-size: 1.4rem;
+  color: #2d3748;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.badge {
+  background: #3182ce;
+  color: #fff;
+  font-size: 0.8rem;
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+}
+
+/* ---------- Skills List ---------- */
+.skills-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.skill-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1rem;
+  background: #f7fafc;
+  border-radius: 8px;
+  border-left: 4px solid #3182ce;
+  transition: background 0.15s;
+}
+
+.skill-item:hover {
+  background: #ebf8ff;
+}
+
+.skill-name {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.skill-level {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Level colour coding */
+.level--expert     { background: #9b2c2c; color: #fff; }
+.level--advanced   { background: #2c7a7b; color: #fff; }
+.level--proficient { background: #2b6cb0; color: #fff; }
+.level--intermediate { background: #6b46c1; color: #fff; }
+.level--basic,
+.level--beginner,
+.level--familiar   { background: #718096; color: #fff; }
+
+/* ---------- Empty Results ---------- */
+.empty-results {
+  background: #fffbeb;
+  border: 1px solid #fbd38d;
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
+  margin-top: 2rem;
+  color: #744210;
+  font-size: 0.95rem;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 480px) {
+  .app-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .drop-zone {
+    padding: 2rem 1rem;
+  }
+
+  .action-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
