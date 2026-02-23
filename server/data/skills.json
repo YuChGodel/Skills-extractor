@@ -1,1 +1,24 @@
-{ "skills": [] }
+{
+  "skills": [
+    {
+      "name": "Java",
+      "level": "Advanced"
+    },
+    {
+      "name": "Python",
+      "level": "Expert"
+    },
+    {
+      "name": "React",
+      "level": "Intermediate"
+    },
+    {
+      "name": "PostgreSQL",
+      "level": "Advanced"
+    },
+    {
+      "name": "Docker",
+      "level": "Basic"
+    }
+  ]
+}

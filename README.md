@@ -69,9 +69,12 @@ http-server .
 |--------|-----------------------|----------------------------------------------------|
 | POST   | `/api/skills/extract` | Upload a PDF CV (`multipart/form-data`, field `cv`). Returns extracted skills JSON. |
 | GET    | `/api/skills`         | Returns the last saved `skills.json` data.         |
+| GET    | `/api/skills/download` | Download the last saved skills as a ZIP archive (JSON + HTML). |
+| POST   | `/api/skills/compare` | Upload two PDF CVs (`multipart/form-data`, fields `cvA` and `cvB`). Returns comparison of skills from both CVs. |
 
 ### Response format
 
+**Extract/Get Skills:**
 ```json
 {
   "skills": [
@@ -80,6 +83,42 @@ http-server .
   ]
 }
 ```
+
+**Compare Skills:**
+```json
+{
+  "skillsA": [
+    { "name": "Java", "level": "Advanced" }
+  ],
+  "skillsB": [
+    { "name": "Java", "level": "Intermediate" }
+  ],
+  "comparison": [
+    {
+      "name": "Java",
+      "cvA": { "level": "Advanced", "numericLevel": 4 },
+      "cvB": { "level": "Intermediate", "numericLevel": 2 },
+      "comparison": "stronger_a",
+      "difference": 2
+    }
+  ]
+}
+```
+
+## Features
+
+### Skills Extractor
+Upload a single CV in PDF format to extract and display developer skills with proficiency levels.
+
+### Skills Comparer
+Compare skills between two CVs side by side:
+- Upload two PDF CVs independently
+- Visual comparison showing stronger/weaker/equal/exclusive skills
+- Sort by strongest differences or alphabetically
+- Filter to show all skills, differences only, or exclusive skills only
+- Responsive design for desktop and tablet
+
+Access the Skills Comparer at `comparer.html`.
 
 ## Architecture
 
