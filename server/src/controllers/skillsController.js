@@ -95,6 +95,93 @@ class SkillsController {
     archive.append(htmlContent, { name: 'skills-report.html' });
     archive.finalize();
   }
+
+  /**
+   * POST /api/skills/compare
+   * Accepts two PDF files (cvA and cvB), extracts skills from both, and returns comparison.
+   */
+  async compare(req, res) {
+    try {
+      if (!req.files || !req.files.cvA || !req.files.cvB) {
+        return res.status(400).json({ error: 'Both CV files (cvA and cvB) are required.' });
+      }
+
+      // Extract skills from both CVs
+      const textA = await pdfService.extractText(req.files.cvA[0].buffer);
+      const textB = await pdfService.extractText(req.files.cvB[0].buffer);
+      
+      const skillsA = skillsExtractor.extractSkills(textA);
+      const skillsB = skillsExtractor.extractSkills(textB);
+
+      // Create comparison result
+      const comparison = this._compareSkills(skillsA, skillsB);
+
+      return res.status(200).json(comparison);
+    } catch (err) {
+      console.error('Error comparing skills:', err);
+      return res.status(500).json({ error: 'Failed to compare skills from PDFs.' });
+    }
+  }
+
+  /**
+   * Helper method to compare two skill arrays
+   * @private
+   */
+  _compareSkills(skillsA, skillsB) {
+    const skillLevels = {
+      'Expert': 5,
+      'Advanced': 4,
+      'Proficient': 3,
+      'Intermediate': 2,
+      'Basic': 1,
+      'Beginner': 1,
+      'Familiar': 1
+    };
+
+    // Create maps for faster lookup
+    const mapA = new Map(skillsA.map(s => [s.name, s]));
+    const mapB = new Map(skillsB.map(s => [s.name, s]));
+
+    // Get all unique skill names
+    const allSkills = new Set([...mapA.keys(), ...mapB.keys()]);
+
+    const comparisonResults = [];
+
+    for (const skillName of allSkills) {
+      const skillA = mapA.get(skillName);
+      const skillB = mapB.get(skillName);
+
+      const levelA = skillA ? (skillLevels[skillA.level] || 2) : 0;
+      const levelB = skillB ? (skillLevels[skillB.level] || 2) : 0;
+
+      let comparison;
+      if (!skillA) {
+        comparison = 'exclusive_b';
+      } else if (!skillB) {
+        comparison = 'exclusive_a';
+      } else if (levelA > levelB) {
+        comparison = 'stronger_a';
+      } else if (levelB > levelA) {
+        comparison = 'stronger_b';
+      } else {
+        comparison = 'equal';
+      }
+
+      comparisonResults.push({
+        name: skillName,
+        cvA: skillA ? { level: skillA.level, numericLevel: levelA } : null,
+        cvB: skillB ? { level: skillB.level, numericLevel: levelB } : null,
+        comparison,
+        difference: Math.abs(levelA - levelB)
+      });
+    }
+
+    return {
+      skillsA,
+      skillsB,
+      comparison: comparisonResults
+    };
+  }
 }
 
 module.exports = new SkillsController();

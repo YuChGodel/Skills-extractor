@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skills Comparer - Skills Extractor</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/comparer.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="app-header">
+      <nav class="nav-bar">
+        <a href="index.html" class="nav-link">Skills Extractor</a>
+        <a href="comparer.html" class="nav-link nav-link--active">Skills Comparer</a>
+      </nav>
+      <h1>Skills Comparer</h1>
+      <p class="subtitle">Upload two CVs in PDF format to compare their skills side by side.</p>
+    </header>
+
+    <main class="main-content">
+      <section class="upload-section comparer-upload">
+        <div class="upload-grid">
+          <!-- CV A Upload -->
+          <div class="upload-box">
+            <h3 class="upload-title">CV A</h3>
+            <div
+              class="drop-zone"
+              :class="{ 'drop-zone--active': isDraggingA, 'drop-zone--has-file': fileA }"
+              @dragover.prevent="isDraggingA = true"
+              @dragleave.prevent="isDraggingA = false"
+              @drop.prevent="onDropA"
+              @click="$refs.fileInputA.click()"
+            >
+              <input
+                ref="fileInputA"
+                type="file"
+                accept="application/pdf"
+                class="file-input"
+                @change="onFileChangeA"
+              />
+              <div v-if="!fileA" class="drop-zone__prompt">
+                <span class="drop-zone__icon">📄</span>
+                <p>Drop CV A here or <strong>click</strong></p>
+              </div>
+              <div v-else class="drop-zone__file-info">
+                <span class="drop-zone__icon">✅</span>
+                <p><strong>{{ fileA.name }}</strong></p>
+                <p class="file-size">{{ formatFileSize(fileA.size) }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- CV B Upload -->
+          <div class="upload-box">
+            <h3 class="upload-title">CV B</h3>
+            <div
+              class="drop-zone"
+              :class="{ 'drop-zone--active': isDraggingB, 'drop-zone--has-file': fileB }"
+              @dragover.prevent="isDraggingB = true"
+              @dragleave.prevent="isDraggingB = false"
+              @drop.prevent="onDropB"
+              @click="$refs.fileInputB.click()"
+            >
+              <input
+                ref="fileInputB"
+                type="file"
+                accept="application/pdf"
+                class="file-input"
+                @change="onFileChangeB"
+              />
+              <div v-if="!fileB" class="drop-zone__prompt">
+                <span class="drop-zone__icon">📄</span>
+                <p>Drop CV B here or <strong>click</strong></p>
+              </div>
+              <div v-else class="drop-zone__file-info">
+                <span class="drop-zone__icon">✅</span>
+                <p><strong>{{ fileB.name }}</strong></p>
+                <p class="file-size">{{ formatFileSize(fileB.size) }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-bar">
+          <button
+            class="btn btn--primary"
+            :disabled="!canCompare || isLoading"
+            @click="compare"
+          >
+            <span v-if="isLoading" class="spinner"></span>
+            <span v-else>⚖ Compare Skills</span>
+          </button>
+          <button
+            v-if="fileA || fileB"
+            class="btn btn--secondary"
+            :disabled="isLoading"
+            @click="reset"
+          >
+            Clear All
+          </button>
+        </div>
+
+        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+      </section>
+
+      <!-- Comparison Results -->
+      <section v-if="comparisonResults.length > 0" class="results-section">
+        <div class="results-header">
+          <h2>Comparison Results <span class="badge">{{ comparisonResults.length }}</span></h2>
+          
+          <div class="controls-bar">
+            <!-- Sorting -->
+            <div class="control-group">
+              <label for="sortBy">Sort by:</label>
+              <select id="sortBy" v-model="sortBy" class="select-control">
+                <option value="difference">Strongest Differences</option>
+                <option value="alphabetical">Alphabetical</option>
+              </select>
+            </div>
+
+            <!-- Filtering -->
+            <div class="control-group">
+              <label for="filterBy">Filter:</label>
+              <select id="filterBy" v-model="filterBy" class="select-control">
+                <option value="all">Show All</option>
+                <option value="differences">Differences Only</option>
+                <option value="exclusive">Exclusive Skills Only</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="comparison-list">
+          <div
+            v-for="(item, index) in filteredAndSortedResults"
+            :key="index"
+            class="comparison-item"
+            :class="'comparison-item--' + item.comparison"
+          >
+            <div class="skill-name-col">
+              <span class="skill-name">{{ item.name }}</span>
+              <span v-if="item.comparison === 'exclusive_a'" class="exclusive-badge">Only in CV A</span>
+              <span v-if="item.comparison === 'exclusive_b'" class="exclusive-badge">Only in CV B</span>
+            </div>
+            
+            <div class="skill-compare-cols">
+              <div class="skill-col skill-col--a" :class="{ 'skill-col--stronger': item.comparison === 'stronger_a' }">
+                <span v-if="item.cvA" class="skill-level" :class="'level--' + item.cvA.level.toLowerCase()">
+                  {{ item.cvA.level }}
+                </span>
+                <span v-else class="skill-level skill-level--absent">—</span>
+                <span v-if="item.comparison === 'stronger_a'" class="indicator">Stronger</span>
+              </div>
+
+              <div class="skill-col skill-col--b" :class="{ 'skill-col--stronger': item.comparison === 'stronger_b' }">
+                <span v-if="item.cvB" class="skill-level" :class="'level--' + item.cvB.level.toLowerCase()">
+                  {{ item.cvB.level }}
+                </span>
+                <span v-else class="skill-level skill-level--absent">—</span>
+                <span v-if="item.comparison === 'stronger_b'" class="indicator">Stronger</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Empty state messages -->
+      <section v-if="hasCompared && comparisonResults.length === 0 && !isLoading" class="empty-results">
+        <p>⚠️ No skills were identified in either CV. Please try different PDF files.</p>
+      </section>
+
+      <section v-if="hasCompared && comparisonResults.length > 0 && filteredAndSortedResults.length === 0" class="empty-results">
+        <p>No skills match the current filter criteria.</p>
+      </section>
+    </main>
+  </div>
+
+  <!-- Vue.js 3 (local vendor copy) -->
+  <script src="vendor/vue.global.prod.js"></script>
+  <script src="js/comparer.js"></script>
+</body>
+</html>
