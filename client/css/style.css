@@ -246,6 +246,24 @@ body {
 .level--beginner,
 .level--familiar   { background: #718096; color: #fff; }
 
+.btn--download {
+  background: #38a169;
+  color: #ffffff;
+}
+
+.btn--download:not(:disabled):hover {
+  background: #2f855a;
+}
+
+/* Download bar below skills list */
+.download-bar {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 /* ---------- Empty Results ---------- */
 .empty-results {
   background: #fffbeb;

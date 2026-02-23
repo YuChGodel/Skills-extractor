@@ -33,4 +33,7 @@ router.post('/extract', apiLimiter, upload.single('cv'), (req, res) => skillsCon
 // GET /api/skills – retrieve last saved skills
 router.get('/', apiLimiter, (req, res) => skillsController.getSkills(req, res));
 
+// GET /api/skills/download – download ZIP report (JSON + HTML)
+router.get('/download', apiLimiter, (req, res) => skillsController.download(req, res));
+
 module.exports = router;

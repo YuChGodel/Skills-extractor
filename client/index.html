@@ -77,6 +77,17 @@
             </span>
           </li>
         </ul>
+        <div class="download-bar">
+          <button
+            class="btn btn--download"
+            :disabled="isDownloading"
+            @click="downloadReport"
+          >
+            <span v-if="isDownloading" class="spinner"></span>
+            <span v-else>⬇ Download Report</span>
+          </button>
+          <p v-if="downloadError" class="error-message">{{ downloadError }}</p>
+        </div>
       </section>
 
       <section v-if="hasRun && skills.length === 0 && !isLoading" class="empty-results">
