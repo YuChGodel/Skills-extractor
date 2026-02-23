@@ -1,0 +1,8 @@
+body { font-family: Arial, sans-serif; padding: 2rem; background: #f9f9f9; color: #333; }
+h1 { color: #444; margin-bottom: 0.25rem; }
+.subtitle { color: #888; margin-bottom: 1.5rem; font-size: 0.95rem; }
+.chart-container { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 1.5rem; display: inline-block; }
+.legend { margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.85rem; }
+.legend-item { display: flex; align-items: center; gap: 0.4rem; }
+.legend-color { width: 14px; height: 14px; border-radius: 3px; }
+.empty { color: #888; margin-top: 2rem; font-size: 1.1rem; }
