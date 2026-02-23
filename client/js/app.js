@@ -22,6 +22,10 @@ createApp({
       hasRun: false,
       /** @type {boolean} Whether the user is dragging a file over the drop zone */
       isDragging: false,
+      /** @type {boolean} Whether a download request is in progress */
+      isDownloading: false,
+      /** @type {string} Download error message to display */
+      downloadError: '',
     };
   },
 
@@ -103,7 +107,37 @@ createApp({
       this.skills = [];
       this.errorMessage = '';
       this.hasRun = false;
+      this.downloadError = '';
       this.$refs.fileInput.value = '';
+    },
+
+    /**
+     * Download the skills report as a ZIP file (JSON + HTML).
+     */
+    async downloadReport() {
+      if (this.isDownloading) return;
+      this.isDownloading = true;
+      this.downloadError = '';
+      try {
+        const response = await fetch(`${API_BASE_URL}/skills/download`);
+        if (!response.ok) {
+          const data = await response.json().catch(() => ({}));
+          throw new Error(data.error || 'Failed to download report.');
+        }
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'skills-report.zip';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        this.downloadError = err.message || 'Failed to download report.';
+      } finally {
+        this.isDownloading = false;
+      }
     },
 
     /**
