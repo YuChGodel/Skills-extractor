@@ -36,4 +36,10 @@ router.get('/', apiLimiter, (req, res) => skillsController.getSkills(req, res));
 // GET /api/skills/download – download ZIP report (JSON + HTML)
 router.get('/download', apiLimiter, (req, res) => skillsController.download(req, res));
 
+// POST /api/skills/compare – upload two PDFs and compare their skills
+router.post('/compare', apiLimiter, upload.fields([
+  { name: 'cvA', maxCount: 1 },
+  { name: 'cvB', maxCount: 1 }
+]), (req, res) => skillsController.compare(req, res));
+
 module.exports = router;

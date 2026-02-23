@@ -43,6 +43,36 @@ body {
   font-size: 1rem;
 }
 
+/* ---------- Navigation Bar ---------- */
+.nav-bar {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.nav-link {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #4a5568;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.nav-link:hover {
+  background: #ebf8ff;
+  color: #2b6cb0;
+}
+
+.nav-link--active {
+  background: #3182ce;
+  color: #ffffff;
+}
+
 /* ---------- Upload Section ---------- */
 .upload-section {
   background: #ffffff;
